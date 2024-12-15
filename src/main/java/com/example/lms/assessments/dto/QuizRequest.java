@@ -1,44 +1,63 @@
 package com.example.lms.assessments.dto;
 
-import java.util.List;
+import java.time.LocalDate;
 
-public class QuestionRequest {
+public class QuizRequest {
 
-    private String text;
-    private List<String> options;
-    private String correctAnswer;
-    private Integer quizId;
+    private int quizId; // Composite key part 1
+    private int assessmentId; // Composite key part 2
+
+    private int timeInMinutes;
+    private LocalDate dueDate;
+    private int maxScore;
+    private int courseId;
 
     // Getters and Setters
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
-    }
-
-    public List<String> getOptions() {
-        return options;
-    }
-
-    public void setOptions(List<String> options) {
-        this.options = options;
-    }
-
-    public String getCorrectAnswer() {
-        return correctAnswer;
-    }
-
-    public void setCorrectAnswer(String correctAnswer) {
-        this.correctAnswer = correctAnswer;
-    }
-
-    public Integer getQuizId() {
+    public int getQuizId() {
         return quizId;
     }
 
-    public void setQuizId(Integer quizId) {
+    public void setQuizId(int quizId) {
         this.quizId = quizId;
+    }
+
+    public int getAssessmentId() {
+        return assessmentId;
+    }
+
+    public void setAssessmentId(int assessmentId) {
+        this.assessmentId = assessmentId;
+    }
+
+    public int getTimeInMinutes() {
+        return timeInMinutes;
+    }
+
+    public void setTimeInMinutes(int timeInMinutes) {
+        this.timeInMinutes = timeInMinutes;
+    }
+
+    public LocalDate getDueDate() {
+        return dueDate;
+    }
+
+    public void setDueDate(LocalDate dueDate) {
+        this.dueDate = dueDate;
+    }
+
+    public int getMaxScore() {
+        return maxScore;
+    }
+
+    public void setMaxScore(int maxScore) {
+        this.maxScore = maxScore;
+    }
+
+    public int getCourseId() {
+        return courseId;
+    }
+
+    public void setCourseId(int courseId) {
+        this.courseId = courseId;
     }
 }
