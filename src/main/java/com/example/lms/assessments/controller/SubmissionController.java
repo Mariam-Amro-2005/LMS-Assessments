@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -46,12 +47,12 @@ public class SubmissionController {
             @RequestParam Integer userId,
             @RequestParam Integer assessmentId,
             @RequestParam Integer quizId,
-            @RequestParam MultipartFile file) {
+            @RequestParam Map<Integer, String> studentAnswers) {
         try {
             QuizSubmission submission = new QuizSubmission();
             submission.setUserId(userId);
             submission.setQuizKey(new QuizId(assessmentId, quizId));
-            submission.setSubmittedFile(file.getBytes());
+            submission.setStudentAnswers(studentAnswers);
             submissionService.saveQuizSubmission(submission);
             return ResponseEntity.ok("Quiz submission saved.");
         } catch (Exception e) {

@@ -1,13 +1,7 @@
 package com.example.lms.assessments.model;
 
-import com.example.lms.assessments.model.QuizId;
 import jakarta.persistence.*;
-import java.util.List;
-
-/*import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.*;
-DESKTOP-3EVP6M1\SQLEXPRESS*/
+import java.util.Map;
 
 @Entity
 @Table(name = "QuizSubmission")
@@ -23,10 +17,11 @@ public class QuizSubmission {
     @Column(nullable = false)
     private Integer userId;
 
-    @Lob
-    //private byte[] submittedFile;
-
-    private List<String> answers;
+    @ElementCollection
+    @CollectionTable(name = "quiz_submission_answers", joinColumns = @JoinColumn(name = "submission_id"))
+    @MapKeyColumn(name = "question_id")
+    @Column(name = "student_answer")
+    private Map<Integer, String> studentAnswers; // Question ID mapped to student answers
 
     // Getters and Setters
     public Integer getSubmissionId() {
@@ -53,20 +48,11 @@ public class QuizSubmission {
         this.userId = userId;
     }
 
-    /*public byte[] getSubmittedFile() {
-        return submittedFile;
+    public Map<Integer, String> getStudentAnswers() {
+        return studentAnswers;
     }
 
-    public void setSubmittedFile(byte[] submittedFile) {
-        this.submittedFile = submittedFile;
-    }*/
-
-    public List<String> getAnswers(){
-        return answers;
-    }
-
-    public void setAnswers(List<String> answers) {
-        this.answers = answers;
+    public void setStudentAnswers(Map<Integer, String> studentAnswers) {
+        this.studentAnswers = studentAnswers;
     }
 }
-

@@ -1,16 +1,12 @@
 package com.example.lms.assessments.service;
 
-import com.example.lms.assessments.model.AssignmentKey;
-import com.example.lms.assessments.model.AssignmentSubmission;
-import com.example.lms.assessments.model.Grades;
-import com.example.lms.assessments.model.QuizId;
-import com.example.lms.assessments.model.QuizSubmission;
-import com.example.lms.assessments.repository.AssignmentSubmissionRepository;
-import com.example.lms.assessments.repository.GradesRepository;
-import com.example.lms.assessments.repository.QuizSubmissionRepository;
+import com.example.lms.assessments.model.*;
+import com.example.lms.assessments.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -19,15 +15,18 @@ public class GradingService {
     private final GradesRepository gradesRepository;
     private final QuizSubmissionRepository quizSubmissionRepository;
     private final AssignmentSubmissionRepository assignmentSubmissionRepository;
+    private final QuestionBankRepository questionBankRepository;
 
     @Autowired
     public GradingService(
             GradesRepository gradesRepository,
             QuizSubmissionRepository quizSubmissionRepository,
-            AssignmentSubmissionRepository assignmentSubmissionRepository) {
+            AssignmentSubmissionRepository assignmentSubmissionRepository,
+            QuestionBankRepository questionBankRepository) {
         this.gradesRepository = gradesRepository;
         this.quizSubmissionRepository = quizSubmissionRepository;
         this.assignmentSubmissionRepository = assignmentSubmissionRepository;
+        this.questionBankRepository = questionBankRepository;
     }
 
     // Automatic grading for quizzes
@@ -79,8 +78,45 @@ public class GradingService {
         return gradesRepository.findByUserIdAndAssignmentKey(userId, assignmentKey);
     }
 
+    // Calculate quiz grade
     private float calculateQuizGrade(QuizSubmission submission) {
-        // Logic to compare submission answers with correct answers
-        return 90.0f; // Placeholder for now
+        // Fetch all questions for the quiz from QuestionBank
+        List<QuestionBank> questionBanks = questionBankRepository.findByIdQuizKey(submission.getQuizKey());
+
+        // Student answers
+        Map<Integer, String> studentAnswers = submission.getStudentAnswers();
+
+        // Grading logic
+        int correctAnswers = 0;
+        int totalQuestions = questionBanks.size();
+
+        for (QuestionBank questionBank : questionBanks) {
+            Question question = questionBank.getQuestion();
+
+            if (studentAnswers.containsKey(question.getQuestionId())) {
+                String studentAnswer = studentAnswers.get(question.getQuestionId());
+                String correctAnswer = null;
+
+                // Fetch correct answer based on question type
+                if (question instanceof MCQQuestion) {
+                    correctAnswer = ((MCQQuestion) question).getCorrectAnswer();
+                } else if (question instanceof TrueFalseQuestion) {
+                    correctAnswer = ((TrueFalseQuestion) question).getCorrectAnswer();
+                } else if (question instanceof ShortAnswerQuestion) {
+                    correctAnswer = ((ShortAnswerQuestion) question).getCorrectAnswer();
+                }
+
+                // Compare answers
+                if (correctAnswer != null && correctAnswer.equalsIgnoreCase(studentAnswer)) {
+                    correctAnswers++;
+                }
+            }
+        }
+
+        // Calculate percentage score
+        if (totalQuestions == 0) {
+            return 0.0f; // Avoid division by zero
+        }
+        return ((float) correctAnswers / totalQuestions) * 100.0f;
     }
 }
