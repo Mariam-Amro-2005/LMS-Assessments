@@ -1,35 +1,28 @@
 package com.example.lms.assessments.model;
 
 import jakarta.persistence.*;
-import java.util.List;
 
 @Entity
-@Table(name = "Quiz")
 public class Quiz {
-    @EmbeddedId
-    private QuizId id;
 
-    @Column(name = "time_in_minutes")
+    @EmbeddedId
+    private QuizId quizId;
+
+    @Column(nullable = false)
     private int timeInMinutes;
 
-    @OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<QuestionBank> questionBanks;
+    @ManyToOne
+    @JoinColumn(name = "assessment_id", insertable = false, updatable = false)
+    private Assessment assessment;
 
-    // Constructors
-    public Quiz() {}
+    // Other fields, getters, and setters...
 
-    public Quiz(QuizId id, int timeInMinutes) {
-        this.id = id;
-        this.timeInMinutes = timeInMinutes;
+    public QuizId getQuizId() {
+        return quizId;
     }
 
-    // Getters and Setters
-    public QuizId getId() {
-        return id;
-    }
-
-    public void setId(QuizId id) {
-        this.id = id;
+    public void setQuizId(QuizId quizId) {
+        this.quizId = quizId;
     }
 
     public int getTimeInMinutes() {
@@ -40,11 +33,11 @@ public class Quiz {
         this.timeInMinutes = timeInMinutes;
     }
 
-    public List<QuestionBank> getQuestionBanks() {
-        return questionBanks;
+    public Assessment getAssessment() {
+        return assessment;
     }
 
-    public void setQuestionBanks(List<QuestionBank> questionBanks) {
-        this.questionBanks = questionBanks;
+    public void setAssessment(Assessment assessment) {
+        this.assessment = assessment;
     }
 }

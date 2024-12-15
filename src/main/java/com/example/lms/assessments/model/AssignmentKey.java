@@ -8,11 +8,11 @@ import java.util.Objects;
 @Embeddable
 public class AssignmentKey implements Serializable {
     private int assignmentId;
-    private Long assessmentId;
+    private Integer assessmentId;
 
     public AssignmentKey() {}
 
-    public AssignmentKey(int assignmentId, Long assessmentId) {
+    public AssignmentKey(int assignmentId, int assessmentId) {
         this.assignmentId = assignmentId;
         this.assessmentId = assessmentId;
     }
@@ -25,11 +25,11 @@ public class AssignmentKey implements Serializable {
         this.assignmentId = assignmentId;
     }
 
-    public Long getAssessmentId() {
+    public Integer getAssessmentId() {
         return assessmentId;
     }
 
-    public void setAssessmentId(Long assessmentId) {
+    public void setAssessmentId(int assessmentId) {
         this.assessmentId = assessmentId;
     }
 

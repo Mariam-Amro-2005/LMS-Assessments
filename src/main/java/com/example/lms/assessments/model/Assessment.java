@@ -17,19 +17,43 @@ public class Assessment {
             strategy = GenerationType.SEQUENCE,
             generator = "assessment_sequence"
     )
-    Long assessmentId;
+    Integer assessmentId;
     String type;
     LocalDate created_date;
     LocalDate due_date;
     private int courseId;
     float max_score;
 
-    public void setAssessmentId(Long assessmentId) {
+    public void setAssessmentId(Integer assessmentId) {
         this.assessmentId = assessmentId;
     }
 
-    public Long getAssessmentId() {
+    public Integer getAssessmentId() {
         return assessmentId;
+    }
+
+    public LocalDate getDueDate() {
+        return due_date;
+    }
+
+    public void setDueDate(LocalDate dueDate) {
+        this.due_date = dueDate;
+    }
+
+    public float getMaxScore() {
+        return max_score;
+    }
+
+    public void setMaxScore(float maxScore) {
+        this.max_score = maxScore;
+    }
+
+    public int getCourseId() {
+        return courseId;
+    }
+
+    public void setCourseId(int courseId) {
+        this.courseId = courseId;
     }
 
 }

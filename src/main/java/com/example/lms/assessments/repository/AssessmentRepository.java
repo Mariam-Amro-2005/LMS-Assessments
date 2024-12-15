@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.Optional;
 
-public interface AssessmentRepository extends JpaRepository<Assessment,Long> {
-    @Query
-    Optional<Assessment> findById(Long assessment_id);
+public interface AssessmentRepository extends JpaRepository<Assessment,Integer> {
+    /*@Query
+    Optional<Assessment> findById(Long assessment_id);*/
 }

@@ -7,12 +7,12 @@ import java.util.Objects;
 @Embeddable
 public class QuizId implements Serializable {
     private int quizId;
-    private Long assessmentId;
+    private Integer assessmentId;
 
     // Constructors
     public QuizId() {}
 
-    public QuizId(int quizId, Long assessmentId) {
+    public QuizId(int quizId, int assessmentId) {
         this.quizId = quizId;
         this.assessmentId = assessmentId;
     }
@@ -26,11 +26,11 @@ public class QuizId implements Serializable {
         this.quizId = quizId;
     }
 
-    public Long getAssessmentId() {
+    public Integer getAssessmentId() {
         return assessmentId;
     }
 
-    public void setAssessmentId(Long assessmentId) {
+    public void setAssessmentId(int assessmentId) {
         this.assessmentId = assessmentId;
     }
 

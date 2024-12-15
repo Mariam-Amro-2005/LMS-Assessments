@@ -7,13 +7,13 @@ import jakarta.persistence.*;
 @DiscriminatorValue("true_false")
 public class TrueFalseQuestion extends Question {
     @Column(nullable = false)
-    private Boolean correctAnswer;
+    private String correctAnswer;
 
-    public Boolean getCorrectAnswer() {
+    public String getCorrectAnswer() {
         return correctAnswer;
     }
 
-    public void setCorrectAnswer(Boolean correctAnswer) {
+    public void setCorrectAnswer(String correctAnswer) {
         this.correctAnswer = correctAnswer;
     }
 }

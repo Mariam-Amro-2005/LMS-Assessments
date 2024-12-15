@@ -3,35 +3,26 @@ package com.example.lms.assessments.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "Assignment")
 public class Assignment {
+
     @EmbeddedId
-    private AssignmentKey id;
+    private AssignmentKey assignmentKey;
 
-    @ManyToOne
-    @MapsId("assessmentId") // Maps the assessmentId in AssignmentKey to the Assessment entity
-    @JoinColumn(name = "assessment_id")
-    private Assessment assessment;
-
-    @Column(name = "question", nullable = false)
+    @Column(nullable = false)
     private String question;
 
-    public Assignment() {}
+    @ManyToOne
+    @JoinColumn(name = "assessment_id", insertable = false, updatable = false)
+    private Assessment assessment;
 
-    public AssignmentKey getId() {
-        return id;
+    // Other fields, getters, and setters...
+
+    public AssignmentKey getAssignmentKey() {
+        return assignmentKey;
     }
 
-    public void setId(AssignmentKey id) {
-        this.id = id;
-    }
-
-    public Assessment getAssessment() {
-        return assessment;
-    }
-
-    public void setAssessment(Assessment assessment) {
-        this.assessment = assessment;
+    public void setAssignmentKey(AssignmentKey assignmentKey) {
+        this.assignmentKey = assignmentKey;
     }
 
     public String getQuestion() {
@@ -40,5 +31,13 @@ public class Assignment {
 
     public void setQuestion(String question) {
         this.question = question;
+    }
+
+    public Assessment getAssessment() {
+        return assessment;
+    }
+
+    public void setAssessment(Assessment assessment) {
+        this.assessment = assessment;
     }
 }
