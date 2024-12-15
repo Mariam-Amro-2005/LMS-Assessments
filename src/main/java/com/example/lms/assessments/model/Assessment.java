@@ -23,6 +23,8 @@ public class Assessment {
     LocalDate due_date;
     private int courseId;
     float max_score;
+    @Column(length = 500)
+    private String feedback;
 
     public void setAssessmentId(Integer assessmentId) {
         this.assessmentId = assessmentId;
@@ -54,6 +56,14 @@ public class Assessment {
 
     public void setCourseId(int courseId) {
         this.courseId = courseId;
+    }
+
+    public String getFeedback() {
+        return feedback;
+    }
+
+    public void setFeedback(String feedback) {
+        this.feedback = feedback;
     }
 
 }
