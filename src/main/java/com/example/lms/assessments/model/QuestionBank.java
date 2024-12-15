@@ -8,29 +8,22 @@ import java.io.Serializable;
 @Entity
 @Table(name = "QuestionBank")
 public class QuestionBank {
+
     @EmbeddedId
     private QuestionBankKey id;
 
     @ManyToOne
-    @MapsId("quizId")
+    @MapsId("quizKey")
     @JoinColumns({
-            @JoinColumn(name = "quiz_id", referencedColumnName = "quiz_id"),
-            @JoinColumn(name = "assessment_id", referencedColumnName = "assessment_id")
+            @JoinColumn(name = "assessment_id", referencedColumnName = "assessmentId"),
+            @JoinColumn(name = "quiz_id", referencedColumnName = "quizId")
     })
     private Quiz quiz;
 
     @ManyToOne
     @MapsId("questionId")
-    @JoinColumn(name = "question_id", referencedColumnName = "question_id")
+    @JoinColumn(name = "question_id")
     private Question question;
-
-    public QuestionBank() {}
-
-    public QuestionBank(QuestionBankKey id, Quiz quiz, Question question) {
-        this.id = id;
-        this.quiz = quiz;
-        this.question = question;
-    }
 
     // Getters and Setters
     public QuestionBankKey getId() {
@@ -56,5 +49,4 @@ public class QuestionBank {
     public void setQuestion(Question question) {
         this.question = question;
     }
-
 }

@@ -4,11 +4,12 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "ShortAnswerQuestion")
-@DiscriminatorValue("short_answer")
 public class ShortAnswerQuestion extends Question {
+
     @Column(nullable = false)
     private String correctAnswer;
 
+    // Getters and Setters
     public String getCorrectAnswer() {
         return correctAnswer;
     }
@@ -17,3 +18,4 @@ public class ShortAnswerQuestion extends Question {
         this.correctAnswer = correctAnswer;
     }
 }
+

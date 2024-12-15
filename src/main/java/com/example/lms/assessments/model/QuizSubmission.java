@@ -2,6 +2,12 @@ package com.example.lms.assessments.model;
 
 import com.example.lms.assessments.model.QuizId;
 import jakarta.persistence.*;
+import java.util.List;
+
+/*import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.*;
+DESKTOP-3EVP6M1\SQLEXPRESS*/
 
 @Entity
 @Table(name = "QuizSubmission")
@@ -18,7 +24,9 @@ public class QuizSubmission {
     private Integer userId;
 
     @Lob
-    private byte[] submittedFile;
+    //private byte[] submittedFile;
+
+    private List<String> answers;
 
     // Getters and Setters
     public Integer getSubmissionId() {
@@ -45,12 +53,20 @@ public class QuizSubmission {
         this.userId = userId;
     }
 
-    public byte[] getSubmittedFile() {
+    /*public byte[] getSubmittedFile() {
         return submittedFile;
     }
 
     public void setSubmittedFile(byte[] submittedFile) {
         this.submittedFile = submittedFile;
+    }*/
+
+    public List<String> getAnswers(){
+        return answers;
+    }
+
+    public void setAnswers(List<String> answers) {
+        this.answers = answers;
     }
 }
 

@@ -4,11 +4,12 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "TrueFalseQuestion")
-@DiscriminatorValue("true_false")
 public class TrueFalseQuestion extends Question {
-    @Column(nullable = false)
-    private String correctAnswer;
 
+    @Column(nullable = false)
+    private String correctAnswer; // "true" or "false"
+
+    // Getters and Setters
     public String getCorrectAnswer() {
         return correctAnswer;
     }

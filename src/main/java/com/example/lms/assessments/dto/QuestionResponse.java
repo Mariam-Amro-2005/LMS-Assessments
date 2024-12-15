@@ -6,6 +6,7 @@ public class QuestionResponse {
 
     private Integer questionId;
     private String text;
+    private String type;
     private List<String> options;
     private String correctAnswer;
 
@@ -40,5 +41,12 @@ public class QuestionResponse {
 
     public void setCorrectAnswer(String correctAnswer) {
         this.correctAnswer = correctAnswer;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+    public String getType(){
+        return type;
     }
 }

@@ -21,6 +21,12 @@ public class QuestionBankKey implements Serializable {
         this.questionId = questionId;
     }
 
+    public QuestionBankKey(QuizId id, int questionId) {
+        this.quizId = id.getQuizId();
+        this.assessmentId = id.getAssessmentId();
+        this.questionId = questionId;
+    }
+
     // Getters and Setters
     public int getQuizId() {
         return quizId;

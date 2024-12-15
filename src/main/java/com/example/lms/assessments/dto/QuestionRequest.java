@@ -7,6 +7,7 @@ import java.util.List;
 public class QuestionRequest {
 
     private String text;
+    private String type;
     private List<String> options;
     private String correctAnswer;
     private QuizId quizId; // Updated to use QuizId instead of Integer
@@ -42,5 +43,12 @@ public class QuestionRequest {
 
     public void setQuizId(QuizId quizId) {
         this.quizId = quizId;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+    public String getType(){
+        return type;
     }
 }
