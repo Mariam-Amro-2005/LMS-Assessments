@@ -1,8 +1,6 @@
 package com.example.lms.assessments.controller;
 
 import com.example.lms.assessments.model.Grades;
-import com.example.lms.assessments.model.AssignmentKey;
-import com.example.lms.assessments.model.QuizId;
 import com.example.lms.assessments.service.GradingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -25,10 +23,9 @@ public class GradingController {
     @PostMapping("/quiz")
     public ResponseEntity<String> autoGradeQuiz(
             @RequestParam Integer userId,
-            @RequestParam Integer assessmentId,
             @RequestParam Integer quizId) {
         try {
-            String result = gradingService.autoGradeQuiz(userId, assessmentId, quizId);
+            String result = gradingService.autoGradeQuiz(userId, quizId);
             return ResponseEntity.ok(result);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error grading quiz: " + e.getMessage());
@@ -39,12 +36,11 @@ public class GradingController {
     @PostMapping("/assignment")
     public ResponseEntity<String> manualGradeAssignment(
             @RequestParam Integer userId,
-            @RequestParam Integer assessmentId,
             @RequestParam Integer assignmentId,
             @RequestParam Float grade,
             @RequestParam(required = false) String feedback) {
         try {
-            String result = gradingService.manualGradeAssignment(userId, assessmentId, assignmentId, grade, feedback);
+            String result = gradingService.manualGradeAssignment(userId, assignmentId, grade, feedback);
             return ResponseEntity.ok(result);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error grading assignment: " + e.getMessage());
@@ -55,10 +51,8 @@ public class GradingController {
     @GetMapping("/quiz")
     public ResponseEntity<Grades> getGradeByQuiz(
             @RequestParam Integer userId,
-            @RequestParam Integer assessmentId,
             @RequestParam Integer quizId) {
-        QuizId quizKey = new QuizId(assessmentId, quizId);
-        Optional<Grades> gradeOpt = gradingService.getGradeByUserAndQuiz(userId, quizKey);
+        Optional<Grades> gradeOpt = gradingService.getGradeByUserAndAssessment(userId, quizId);
         return gradeOpt.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
@@ -66,10 +60,8 @@ public class GradingController {
     @GetMapping("/assignment")
     public ResponseEntity<Grades> getGradeByAssignment(
             @RequestParam Integer userId,
-            @RequestParam Integer assessmentId,
             @RequestParam Integer assignmentId) {
-        AssignmentKey assignmentKey = new AssignmentKey(assessmentId, assignmentId);
-        Optional<Grades> gradeOpt = gradingService.getGradeByUserAndAssignment(userId, assignmentKey);
+        Optional<Grades> gradeOpt = gradingService.getGradeByUserAndAssessment(userId, assignmentId);
         return gradeOpt.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 }

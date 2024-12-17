@@ -34,4 +34,8 @@ public class Quiz extends Assessment {
     public void addQuestion(Question question) {
         this.questions.add(question);
     }
+    // Expose quizId inherited from Assessment
+    public Integer getQuizId() {
+        return this.getAssessmentId();
+    }
 }

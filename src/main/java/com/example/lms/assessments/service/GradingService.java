@@ -15,6 +15,7 @@ public class GradingService {
     private final GradesRepository gradesRepository;
     private final QuizSubmissionRepository quizSubmissionRepository;
     private final AssignmentSubmissionRepository assignmentSubmissionRepository;
+    private final AssessmentRepository assessmentRepository;
     private final QuestionBankRepository questionBankRepository;
 
     @Autowired
@@ -22,28 +23,32 @@ public class GradingService {
             GradesRepository gradesRepository,
             QuizSubmissionRepository quizSubmissionRepository,
             AssignmentSubmissionRepository assignmentSubmissionRepository,
+            AssessmentRepository assessmentRepository,
             QuestionBankRepository questionBankRepository) {
         this.gradesRepository = gradesRepository;
         this.quizSubmissionRepository = quizSubmissionRepository;
         this.assignmentSubmissionRepository = assignmentSubmissionRepository;
+        this.assessmentRepository = assessmentRepository;
         this.questionBankRepository = questionBankRepository;
     }
 
     // Automatic grading for quizzes
-    public String autoGradeQuiz(Integer userId, Integer assessmentId, Integer quizId) {
-        QuizId quizKey = new QuizId(assessmentId, quizId);
-        Optional<QuizSubmission> submissionOpt = quizSubmissionRepository.findByQuizKeyAndUserId(quizKey, userId);
-
+    public String autoGradeQuiz(Integer userId, Integer quizId) {
+        // Fetch QuizSubmission
+        Optional<QuizSubmission> submissionOpt = quizSubmissionRepository.findByQuiz_QuizIdAndUserId(quizId, userId);
         if (submissionOpt.isEmpty()) {
-            throw new IllegalArgumentException("Submission not found for quiz.");
+            throw new IllegalArgumentException("Quiz submission not found.");
         }
 
         QuizSubmission submission = submissionOpt.get();
+
+        // Calculate grade
         float calculatedGrade = calculateQuizGrade(submission);
 
+        // Save grade
         Grades grade = new Grades();
         grade.setUserId(userId);
-        grade.setQuizKey(quizKey);
+        grade.setAssessment(submission.getQuiz());
         grade.setGrade(calculatedGrade);
 
         gradesRepository.save(grade);
@@ -51,72 +56,69 @@ public class GradingService {
     }
 
     // Manual grading for assignments
-    public String manualGradeAssignment(Integer userId, Integer assessmentId, Integer assignmentId, Float grade, String feedback) {
-        AssignmentKey assignmentKey = new AssignmentKey(assessmentId, assignmentId);
-        Optional<AssignmentSubmission> submissionOpt = assignmentSubmissionRepository.findByAssignmentKeyAndUserId(assignmentKey, userId);
-
+    public String manualGradeAssignment(Integer userId, Integer assignmentId, Float gradeValue, String feedback) {
+        // Fetch AssignmentSubmission
+        Optional<AssignmentSubmission> submissionOpt = assignmentSubmissionRepository.findByAssignment_AssignmentIdAndUserId(assignmentId, userId);
         if (submissionOpt.isEmpty()) {
-            throw new IllegalArgumentException("Submission not found for assignment.");
+            throw new IllegalArgumentException("Assignment submission not found.");
         }
 
-        Grades grades = new Grades();
-        grades.setUserId(userId);
-        grades.setAssignmentKey(assignmentKey);
-        grades.setGrade(grade);
-        grades.setFeedback(feedback);
+        AssignmentSubmission submission = submissionOpt.get();
 
-        gradesRepository.save(grades);
-        return "Assignment graded successfully. Grade: " + grade;
+        // Save grade
+        Grades grade = new Grades();
+        grade.setUserId(userId);
+        grade.setAssessment(submission.getAssignment());
+        grade.setGrade(gradeValue);
+        grade.setFeedback(feedback);
+
+        gradesRepository.save(grade);
+        return "Assignment graded successfully. Grade: " + gradeValue;
     }
 
-    // Fetch grades for a specific user and assessment
-    public Optional<Grades> getGradeByUserAndQuiz(Integer userId, QuizId quizKey) {
-        return gradesRepository.findByUserIdAndQuizKey(userId, quizKey);
-    }
-
-    public Optional<Grades> getGradeByUserAndAssignment(Integer userId, AssignmentKey assignmentKey) {
-        return gradesRepository.findByUserIdAndAssignmentKey(userId, assignmentKey);
+    // Fetch grade by user and assessment
+    public Optional<Grades> getGradeByUserAndAssessment(Integer userId, Integer assessmentId) {
+        return gradesRepository.findByUserIdAndAssessment_AssessmentId(userId, assessmentId);
     }
 
     // Calculate quiz grade
     private float calculateQuizGrade(QuizSubmission submission) {
-        // Fetch all questions for the quiz from QuestionBank
-        List<QuestionBank> questionBanks = questionBankRepository.findByIdQuizKey(submission.getQuizKey());
+        // Fetch the Quiz object
+        Quiz quiz = submission.getQuiz();
 
-        // Student answers
+        // Fetch all questions for the quiz from QuestionBank
+        List<QuestionBank> questionBanks = questionBankRepository.findByQuizzes(quiz);
+
         Map<Integer, String> studentAnswers = submission.getStudentAnswers();
 
-        // Grading logic
         int correctAnswers = 0;
-        int totalQuestions = questionBanks.size();
+        int totalQuestions = 0;
 
         for (QuestionBank questionBank : questionBanks) {
-            Question question = questionBank.getQuestion();
+            for (Question question : questionBank.getQuestions()) {
+                totalQuestions++;
 
-            if (studentAnswers.containsKey(question.getQuestionId())) {
-                String studentAnswer = studentAnswers.get(question.getQuestionId());
-                String correctAnswer = null;
+                if (studentAnswers.containsKey(question.getQuestionId())) {
+                    String studentAnswer = studentAnswers.get(question.getQuestionId());
+                    String correctAnswer = null;
 
-                // Fetch correct answer based on question type
-                if (question instanceof MCQQuestion) {
-                    correctAnswer = ((MCQQuestion) question).getCorrectAnswer();
-                } else if (question instanceof TrueFalseQuestion) {
-                    correctAnswer = ((TrueFalseQuestion) question).getCorrectAnswer();
-                } else if (question instanceof ShortAnswerQuestion) {
-                    correctAnswer = ((ShortAnswerQuestion) question).getCorrectAnswer();
-                }
+                    if (question instanceof MCQQuestion) {
+                        correctAnswer = ((MCQQuestion) question).getCorrectAnswer();
+                    } else if (question instanceof TrueFalseQuestion) {
+                        correctAnswer = ((TrueFalseQuestion) question).getCorrectAnswer();
+                    } else if (question instanceof ShortAnswerQuestion) {
+                        correctAnswer = ((ShortAnswerQuestion) question).getCorrectAnswer();
+                    }
 
-                // Compare answers
-                if (correctAnswer != null && correctAnswer.equalsIgnoreCase(studentAnswer)) {
-                    correctAnswers++;
+                    if (correctAnswer != null && correctAnswer.equalsIgnoreCase(studentAnswer)) {
+                        correctAnswers++;
+                    }
                 }
             }
         }
 
         // Calculate percentage score
-        if (totalQuestions == 0) {
-            return 0.0f; // Avoid division by zero
-        }
-        return ((float) correctAnswers / totalQuestions) * 100.0f;
+        return totalQuestions == 0 ? 0.0f : ((float) correctAnswers / totalQuestions) * 100.0f;
     }
+
 }
