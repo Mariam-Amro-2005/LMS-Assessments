@@ -1,7 +1,5 @@
 package com.example.lms.assessments.dto;
 
-import com.example.lms.assessments.model.QuizId;
-
 import java.util.List;
 
 public class QuestionRequest {
@@ -10,7 +8,7 @@ public class QuestionRequest {
     private String type;
     private List<String> options;
     private String correctAnswer;
-    private QuizId quizId; // Updated to use QuizId instead of Integer
+    private Integer quizId; // Changed from QuizId composite key to simple Integer
 
     // Getters and Setters
     public String getText() {
@@ -37,18 +35,19 @@ public class QuestionRequest {
         this.correctAnswer = correctAnswer;
     }
 
-    public QuizId getQuizId() {
+    public Integer getQuizId() {
         return quizId;
     }
 
-    public void setQuizId(QuizId quizId) {
+    public void setQuizId(Integer quizId) {
         this.quizId = quizId;
+    }
+
+    public String getType() {
+        return type;
     }
 
     public void setType(String type) {
         this.type = type;
-    }
-    public String getType(){
-        return type;
     }
 }

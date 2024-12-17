@@ -2,7 +2,6 @@ package com.example.lms.assessments.controller;
 
 import com.example.lms.assessments.dto.QuestionRequest;
 import com.example.lms.assessments.dto.QuestionResponse;
-import com.example.lms.assessments.model.QuizId;
 import com.example.lms.assessments.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +25,7 @@ public class QuestionController {
         return ResponseEntity.ok(questionService.createQuestion(request));
     }
 
-    // Endpoint for MCQ Questions
+    // Specific endpoints for question types
     @PostMapping("/mcq")
     public ResponseEntity<String> createMCQ(@RequestBody QuestionRequest request) {
         try {
@@ -38,7 +37,6 @@ public class QuestionController {
         }
     }
 
-    // Endpoint for True/False Questions
     @PostMapping("/true-false")
     public ResponseEntity<String> createTrueFalse(@RequestBody QuestionRequest request) {
         try {
@@ -50,26 +48,19 @@ public class QuestionController {
         }
     }
 
-    // Endpoint for Short Answer Questions
     @PostMapping("/short-answer")
     public ResponseEntity<String> createShortAnswer(@RequestBody QuestionRequest request) {
-        try {
-            request.setType("short_answer");
-            String response = questionService.createQuestion(request);
-            return ResponseEntity.ok("Short Answer question created successfully. " + response);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
-        }
+        request.setType("short_answer");
+        return ResponseEntity.ok(questionService.createQuestion(request));
     }
-
 
     @GetMapping("/quiz/{quizId}")
-    public ResponseEntity<List<QuestionResponse>> getQuestionsByQuizId(
-            @RequestParam Integer assessmentId,
-            @PathVariable Integer quizId
-            /*@RequestParam Integer quizId*/) {
-        QuizId quizKey = new QuizId(assessmentId, quizId);
-        List<QuestionResponse> questions = questionService.getQuestionsByQuizId(quizKey);
+    public ResponseEntity<List<QuestionResponse>> getQuestionsByQuizId(@PathVariable Integer quizId) {
+        // Call the service method to get the questions for the given quizId
+        List<QuestionResponse> questions = questionService.getQuestionsByQuizId(quizId);
+
+        // Return the response with the list of questions
         return ResponseEntity.ok(questions);
     }
+
 }

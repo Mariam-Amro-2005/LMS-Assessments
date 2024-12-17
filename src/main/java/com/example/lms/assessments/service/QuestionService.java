@@ -39,20 +39,22 @@ public class QuestionService {
 
     public String createQuestion(QuestionRequest request) {
         // Find the associated quiz
-        QuizId quizKey = request.getQuizId();
-        Optional<Quiz> quizOpt = quizRepository.findById(quizKey);
-        if (quizOpt.isEmpty()) {
-            throw new IllegalArgumentException("Quiz not found for key: " + quizKey);
-        }
+        Integer quizId = request.getQuizId();
+        Quiz quiz = quizRepository.findById(quizId)
+                .orElseThrow(() -> new IllegalArgumentException("Quiz not found with ID: " + quizId));
 
-        Quiz quiz = quizOpt.get();
-        Question question = saveQuestionByType(request); // Save to specific type table
+        // Save the question based on its type
+        Question question = saveQuestionByType(request);
 
-        // Add to QuestionBank
+        // Add the question to the quiz and the question bank
+        quiz.addQuestion(question);
+        question.addQuiz(quiz);
+
+        // Create and save the QuestionBank entry
         QuestionBank questionBank = new QuestionBank();
-        questionBank.setId(new QuestionBankKey(quizKey, question.getQuestionId()));
-        questionBank.setQuiz(quiz);
-        questionBank.setQuestion(question);
+        questionBank.addQuestion(question);
+        questionBank.addQuiz(quiz);
+
         questionBankRepository.save(questionBank);
 
         return "Question created and added to QuestionBank successfully.";
@@ -84,18 +86,21 @@ public class QuestionService {
         }
     }
 
-    public List<QuestionResponse> getQuestionsByQuizId(QuizId quizId) {
-        // Fetch all QuestionBank entries for the quiz
-        List<QuestionBank> questionBanks = questionBankRepository.findByIdQuizKey(quizId);
+    public List<QuestionResponse> getQuestionsByQuizId(Integer quizId) {
+        List<QuestionBank> questionBanks = questionBankRepository.findByQuizId(quizId);
 
-        // Map to QuestionResponse DTOs
-        return questionBanks.stream()
-                .map(questionBank -> mapToQuestionResponse(questionBank.getQuestion()))
+        List<QuestionResponse> collect = questionBanks.stream()
+                .flatMap(questionBank -> questionBank.getQuestions().stream()  // Stream each question in the list
+                        .map(this::mapToQuestionResponse))  // Map each question to a QuestionResponse
                 .collect(Collectors.toList());
+        return collect;
     }
 
-    private QuestionResponse mapToQuestionResponse(Question question) {
+
+    private QuestionResponse mapToQuestionResponse(List<Question> questions) {
+        // This can be adjusted to handle all question types (MCQ, TF, Short Answer)
         QuestionResponse response = new QuestionResponse();
+        Question question = questions.get(0);  // Assuming only one question per bank in this scenario
         response.setQuestionId(question.getQuestionId());
         response.setText(question.getText());
         response.setType(question.getType());
@@ -114,6 +119,4 @@ public class QuestionService {
 
         return response;
     }
-
 }
-

@@ -1,8 +1,6 @@
 package com.example.lms.assessments.model;
 
-
 import jakarta.persistence.*;
-
 import java.util.List;
 
 @Entity
@@ -15,6 +13,9 @@ public class QuestionBank {
 
     @ManyToMany(mappedBy = "questionBanks")
     private List<Question> questions;
+
+    @ManyToMany(mappedBy = "questionBanks")
+    private List<Quiz> quizzes;
 
     // Getters and setters
     public Integer getQuestionBankId() {
@@ -32,5 +33,21 @@ public class QuestionBank {
     public void setQuestions(List<Question> questions) {
         this.questions = questions;
     }
-}
 
+    public List<Quiz> getQuizzes() {
+        return quizzes;
+    }
+
+    public void setQuizzes(List<Quiz> quizzes) {
+        this.quizzes = quizzes;
+    }
+
+    // Methods to add questions and quizzes
+    public void addQuestion(Question question) {
+        this.questions.add(question);
+    }
+
+    public void addQuiz(Quiz quiz) {
+        this.quizzes.add(quiz);
+    }
+}

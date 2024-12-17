@@ -4,7 +4,7 @@ import java.util.List;
 
 public class QuestionResponse {
 
-    private Integer questionId;
+    private Integer questionId;  // Added questionId
     private String text;
     private String type;
     private List<String> options;
@@ -43,10 +43,11 @@ public class QuestionResponse {
         this.correctAnswer = correctAnswer;
     }
 
+    public String getType() {
+        return type;
+    }
+
     public void setType(String type) {
         this.type = type;
-    }
-    public String getType(){
-        return type;
     }
 }

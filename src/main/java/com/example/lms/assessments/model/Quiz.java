@@ -1,13 +1,9 @@
 package com.example.lms.assessments.model;
 
 import jakarta.persistence.*;
-import org.springframework.data.annotation.PersistenceConstructor;
-import org.springframework.data.relational.core.mapping.MappedCollection;
-
 import java.util.List;
 
 @Entity
-//@Table(name = "Quiz")
 @PrimaryKeyJoinColumn(name = "assessment_id")
 public class Quiz extends Assessment {
 
@@ -15,9 +11,9 @@ public class Quiz extends Assessment {
     private int timeInMinutes;
 
     @ManyToMany(cascade = CascadeType.ALL)
-    //@JoinColumn(name = "assessment_id", referencedColumnName = "assessmentId")
     private List<Question> questions;
 
+    // Getters and setters
     public int getTimeInMinutes() {
         return timeInMinutes;
     }
@@ -32,5 +28,10 @@ public class Quiz extends Assessment {
 
     public void setQuestions(List<Question> questions) {
         this.questions = questions;
+    }
+
+    // Method to add questions
+    public void addQuestion(Question question) {
+        this.questions.add(question);
     }
 }
