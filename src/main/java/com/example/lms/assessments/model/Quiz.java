@@ -1,29 +1,22 @@
 package com.example.lms.assessments.model;
 
 import jakarta.persistence.*;
+import org.springframework.data.annotation.PersistenceConstructor;
+import org.springframework.data.relational.core.mapping.MappedCollection;
+
+import java.util.List;
 
 @Entity
-public class Quiz {
+//@Table(name = "Quiz")
+@PrimaryKeyJoinColumn(name = "assessment_id")
+public class Quiz extends Assessment {
 
-    @EmbeddedId
-    private QuizId quizId;
-
-    @Column(nullable = false)
+    @Column(name = "time_in_minutes", nullable = false)
     private int timeInMinutes;
 
-    @ManyToOne
-    @JoinColumn(name = "assessment_id", insertable = false, updatable = false)
-    private Assessment assessment;
-
-    // Other fields, getters, and setters...
-
-    public QuizId getQuizId() {
-        return quizId;
-    }
-
-    public void setQuizId(QuizId quizId) {
-        this.quizId = quizId;
-    }
+    @ManyToMany(cascade = CascadeType.ALL)
+    //@JoinColumn(name = "assessment_id", referencedColumnName = "assessmentId")
+    private List<Question> questions;
 
     public int getTimeInMinutes() {
         return timeInMinutes;
@@ -33,11 +26,11 @@ public class Quiz {
         this.timeInMinutes = timeInMinutes;
     }
 
-    public Assessment getAssessment() {
-        return assessment;
+    public List<Question> getQuestions() {
+        return questions;
     }
 
-    public void setAssessment(Assessment assessment) {
-        this.assessment = assessment;
+    public void setQuestions(List<Question> questions) {
+        this.questions = questions;
     }
 }

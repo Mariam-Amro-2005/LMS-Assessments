@@ -13,11 +13,10 @@ public class Grades {
     @Column(nullable = false)
     private Integer userId;
 
-    @Embedded
-    private QuizId quizKey; // Nullable for assignments
-
-    @Embedded
-    private AssignmentKey assignmentKey; // Nullable for quizzes
+    // Many-to-One relationship with Assessment
+    @ManyToOne
+    @JoinColumn(name = "assessment_id", nullable = false)
+    private Assessment assessment;
 
     @Column(nullable = false)
     private Float grade;
@@ -42,20 +41,12 @@ public class Grades {
         this.userId = userId;
     }
 
-    public QuizId getQuizKey() {
-        return quizKey;
+    public Assessment getAssessment() {
+        return assessment;
     }
 
-    public void setQuizKey(QuizId quizKey) {
-        this.quizKey = quizKey;
-    }
-
-    public AssignmentKey getAssignmentKey() {
-        return assignmentKey;
-    }
-
-    public void setAssignmentKey(AssignmentKey assignmentKey) {
-        this.assignmentKey = assignmentKey;
+    public void setAssessment(Assessment assessment) {
+        this.assessment = assessment;
     }
 
     public Float getGrade() {

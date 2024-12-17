@@ -5,10 +5,11 @@ import jakarta.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name = "MCQQuestion")
+//@Table(name = "MCQQuestion")
+@PrimaryKeyJoinColumn(name = "question_id")
 public class MCQQuestion extends Question {
 
-    @Column(nullable = false)
+    @Column(name = "correct_answer", nullable = false)
     private String correctAnswer;
 
     @ElementCollection

@@ -3,10 +3,11 @@ package com.example.lms.assessments.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "ShortAnswerQuestion")
+//@Table(name = "ShortAnswerQuestion")
+@PrimaryKeyJoinColumn(name = "question_id")
 public class ShortAnswerQuestion extends Question {
 
-    @Column(nullable = false)
+    @Column(name = "correct_answer", nullable = false)
     private String correctAnswer;
 
     // Getters and Setters
