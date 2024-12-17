@@ -14,8 +14,8 @@ public class QuestionBank {
     @ManyToMany(mappedBy = "questionBanks")
     private List<Question> questions;
 
-    @ManyToMany(mappedBy = "questionBanks")
-    private List<Quiz> quizzes;
+    /*@ManyToMany(mappedBy = "questionBanks")
+    private List<Quiz> quizzes;*/
 
     // Getters and setters
     public Integer getQuestionBankId() {
@@ -34,20 +34,20 @@ public class QuestionBank {
         this.questions = questions;
     }
 
-    public List<Quiz> getQuizzes() {
+    /*public List<Quiz> getQuizzes() {
         return quizzes;
     }
 
     public void setQuizzes(List<Quiz> quizzes) {
         this.quizzes = quizzes;
-    }
+    }*/
 
     // Methods to add questions and quizzes
     public void addQuestion(Question question) {
         this.questions.add(question);
     }
 
-    public void addQuiz(Quiz quiz) {
+    /*public void addQuiz(Quiz quiz) {
         this.quizzes.add(quiz);
-    }
+    }*/
 }

@@ -53,7 +53,7 @@ public class QuestionService {
         // Create and save the QuestionBank entry
         QuestionBank questionBank = new QuestionBank();
         questionBank.addQuestion(question);
-        questionBank.addQuiz(quiz);
+        //questionBank.addQuiz(quiz);
 
         questionBankRepository.save(questionBank);
 
