@@ -87,24 +87,27 @@ public class QuestionService {
     }
 
     public List<QuestionResponse> getQuestionsByQuizId(Integer quizId) {
+        // Find all QuestionBanks associated with the quizId
         List<QuestionBank> questionBanks = questionBankRepository.findByQuizId(quizId);
 
+        // Flatten the list of questions from each QuestionBank and map them to QuestionResponse
         List<QuestionResponse> collect = questionBanks.stream()
-                .flatMap(questionBank -> questionBank.getQuestions().stream()  // Stream each question in the list
-                        .map(this::mapToQuestionResponse))  // Map each question to a QuestionResponse
+                .flatMap(questionBank -> questionBank.getQuestions().stream()) // Stream the questions in each QuestionBank
+                .map(this::mapToQuestionResponse) // Map each Question to QuestionResponse
                 .collect(Collectors.toList());
+
         return collect;
     }
 
 
-    private QuestionResponse mapToQuestionResponse(List<Question> questions) {
-        // This can be adjusted to handle all question types (MCQ, TF, Short Answer)
+    private QuestionResponse mapToQuestionResponse(Question question) {
+        // Create a new response object
         QuestionResponse response = new QuestionResponse();
-        Question question = questions.get(0);  // Assuming only one question per bank in this scenario
         response.setQuestionId(question.getQuestionId());
         response.setText(question.getText());
         response.setType(question.getType());
 
+        // Handle specific question types
         if (question instanceof MCQQuestion) {
             MCQQuestion mcq = (MCQQuestion) question;
             response.setOptions(mcq.getOptions());
@@ -119,4 +122,5 @@ public class QuestionService {
 
         return response;
     }
+
 }
