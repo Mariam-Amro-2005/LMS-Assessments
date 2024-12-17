@@ -86,33 +86,31 @@ public class GradingService {
         // Fetch the Quiz object
         Quiz quiz = submission.getQuiz();
 
-        // Fetch all questions for the quiz from QuestionBank
-        List<QuestionBank> questionBanks = questionBankRepository.findByQuizzes(quiz);
+        // Get all Questions associated with the Quiz
+        List<Question> questions = quiz.getQuestions();
 
+        // Student answers from the submission
         Map<Integer, String> studentAnswers = submission.getStudentAnswers();
 
         int correctAnswers = 0;
-        int totalQuestions = 0;
+        int totalQuestions = questions.size();
 
-        for (QuestionBank questionBank : questionBanks) {
-            for (Question question : questionBank.getQuestions()) {
-                totalQuestions++;
+        for (Question question : questions) {
+            // Compare student answers with correct answers
+            if (studentAnswers.containsKey(question.getQuestionId())) {
+                String studentAnswer = studentAnswers.get(question.getQuestionId());
+                String correctAnswer = null;
 
-                if (studentAnswers.containsKey(question.getQuestionId())) {
-                    String studentAnswer = studentAnswers.get(question.getQuestionId());
-                    String correctAnswer = null;
+                if (question instanceof MCQQuestion) {
+                    correctAnswer = ((MCQQuestion) question).getCorrectAnswer();
+                } else if (question instanceof TrueFalseQuestion) {
+                    correctAnswer = ((TrueFalseQuestion) question).getCorrectAnswer();
+                } else if (question instanceof ShortAnswerQuestion) {
+                    correctAnswer = ((ShortAnswerQuestion) question).getCorrectAnswer();
+                }
 
-                    if (question instanceof MCQQuestion) {
-                        correctAnswer = ((MCQQuestion) question).getCorrectAnswer();
-                    } else if (question instanceof TrueFalseQuestion) {
-                        correctAnswer = ((TrueFalseQuestion) question).getCorrectAnswer();
-                    } else if (question instanceof ShortAnswerQuestion) {
-                        correctAnswer = ((ShortAnswerQuestion) question).getCorrectAnswer();
-                    }
-
-                    if (correctAnswer != null && correctAnswer.equalsIgnoreCase(studentAnswer)) {
-                        correctAnswers++;
-                    }
+                if (correctAnswer != null && correctAnswer.equalsIgnoreCase(studentAnswer)) {
+                    correctAnswers++;
                 }
             }
         }
@@ -120,5 +118,6 @@ public class GradingService {
         // Calculate percentage score
         return totalQuestions == 0 ? 0.0f : ((float) correctAnswers / totalQuestions) * 100.0f;
     }
+
 
 }

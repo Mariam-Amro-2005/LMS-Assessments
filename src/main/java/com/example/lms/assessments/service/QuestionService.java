@@ -87,17 +87,16 @@ public class QuestionService {
     }
 
     public List<QuestionResponse> getQuestionsByQuizId(Integer quizId) {
-        // Find all QuestionBanks associated with the quizId
-        List<QuestionBank> questionBanks = questionBankRepository.findByQuizId(quizId);
+        // Fetch the Quiz object
+        Quiz quiz = quizRepository.findById(quizId)
+                .orElseThrow(() -> new IllegalArgumentException("Quiz not found with ID: " + quizId));
 
-        // Flatten the list of questions from each QuestionBank and map them to QuestionResponse
-        List<QuestionResponse> collect = questionBanks.stream()
-                .flatMap(questionBank -> questionBank.getQuestions().stream()) // Stream the questions in each QuestionBank
-                .map(this::mapToQuestionResponse) // Map each Question to QuestionResponse
+        // Map all Questions in the Quiz to QuestionResponse
+        return quiz.getQuestions().stream()
+                .map(this::mapToQuestionResponse)
                 .collect(Collectors.toList());
-
-        return collect;
     }
+
 
 
     private QuestionResponse mapToQuestionResponse(Question question) {
