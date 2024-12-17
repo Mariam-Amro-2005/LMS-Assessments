@@ -11,8 +11,9 @@ public class QuizSubmission {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer submissionId;
 
-    @Embedded
-    private QuizId quizKey;
+    @ManyToOne
+    @JoinColumn(name = "quiz_id", nullable = false)
+    private Quiz quiz;
 
     @Column(nullable = false)
     private Integer userId;
@@ -32,12 +33,12 @@ public class QuizSubmission {
         this.submissionId = submissionId;
     }
 
-    public QuizId getQuizKey() {
-        return quizKey;
+    public Quiz getQuiz() {
+        return quiz;
     }
 
-    public void setQuizKey(QuizId quizKey) {
-        this.quizKey = quizKey;
+    public void setQuiz(Quiz quiz) {
+        this.quiz = quiz;
     }
 
     public Integer getUserId() {
