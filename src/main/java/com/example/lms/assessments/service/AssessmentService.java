@@ -4,15 +4,14 @@ import com.example.lms.assessments.dto.AssignmentRequest;
 import com.example.lms.assessments.dto.QuizRequest;
 import com.example.lms.assessments.model.Assessment;
 import com.example.lms.assessments.model.Assignment;
-import com.example.lms.assessments.model.AssignmentKey;
 import com.example.lms.assessments.model.Quiz;
-import com.example.lms.assessments.model.QuizId;
 import com.example.lms.assessments.repository.AssessmentRepository;
 import com.example.lms.assessments.repository.AssignmentRepository;
 import com.example.lms.assessments.repository.QuizRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 @Service
@@ -32,57 +31,51 @@ public class AssessmentService {
         this.quizRepository = quizRepository;
     }
 
-    // Fetch Assignment by composite key (assignmentId, assessmentId)
-    public Optional<Assignment> getAssignmentById(int assignmentId, int assessmentId) {
-        return assignmentRepository.findById(new AssignmentKey(assignmentId, assessmentId));
+    // Fetch Assignment by ID
+    public Optional<Assignment> getAssignmentById(int assessmentId) {
+        return assignmentRepository.findById(assessmentId);
     }
 
-    // Fetch Quiz by composite key (quizId, assessmentId)
-    public Optional<Quiz> getQuizById(int quizId, int assessmentId) {
-        return quizRepository.findById(new QuizId(quizId, assessmentId));
+    // Fetch Quiz by ID
+    public Optional<Quiz> getQuizById(int assessmentId) {
+        return quizRepository.findById(assessmentId);
     }
 
-    // Create a new assignment
-    public String createAssignment(AssignmentRequest assignmentRequest) {
-        // Fetch associated Assessment
-        Optional<Assessment> assessmentOpt = assessmentRepository.findById(assignmentRequest.getAssessmentId());
-        //Optional<Assignment> assessmentOpt = assignmentRepository.findById(assignmentRequest.getAssessmentId());
-        if (assessmentOpt.isEmpty()) {
-            throw new IllegalArgumentException("Assessment not found for ID: " + assignmentRequest.getAssessmentId());
-        }
-
-        Assignment assignment = mapToAssignment(assignmentRequest, assessmentOpt.get());
+    // Create a new Assignment
+    public String createAssignment(AssignmentRequest request) {
+        Assignment assignment = mapToAssignment(request);
         assignmentRepository.save(assignment);
         return "Assignment created successfully.";
     }
 
-    // Create a new quiz
-    public String createQuiz(QuizRequest quizRequest) {
-        // Fetch associated Assessment
-        Optional<Assessment> assessmentOpt = assessmentRepository.findById(quizRequest.getAssessmentId());
-        //Optional<Quiz> assessmentOpt = quizRepository.findById(quizRequest.getAssessmentId());
-        if (assessmentOpt.isEmpty()) {
-            throw new IllegalArgumentException("Assessment not found for ID: " + quizRequest.getAssessmentId());
-        }
-
-        Quiz quiz = mapToQuiz(quizRequest, assessmentOpt.get());
+    // Create a new Quiz
+    public String createQuiz(QuizRequest request) {
+        Quiz quiz = mapToQuiz(request);
         quizRepository.save(quiz);
         return "Quiz created successfully.";
     }
 
-    private Assignment mapToAssignment(AssignmentRequest request, Assessment assessment) {
+    // Map AssignmentRequest to Assignment entity
+    private Assignment mapToAssignment(AssignmentRequest request) {
         Assignment assignment = new Assignment();
-        assignment.setAssignmentKey(new AssignmentKey(request.getAssignmentId(), assessment.getAssessmentId()));
-        assignment.setQuestion(request.getQuestion());
-        assignment.setAssessment(assessment); // Set reference to Assessment
+        assignment.setQuestion(request.getQuestion());        // Specific to Assignment
+        assignment.setDueDate(request.getDueDate());          // Inherited from Assessment
+        assignment.setMaxScore(request.getMaxScore());        // Inherited from Assessment
+        assignment.setCourseId(request.getCourseId());        // Inherited from Assessment
+        assignment.setCreated_date(LocalDate.now());          // Set creation date
+        assignment.setType("assignment");                     // Type identifier
         return assignment;
     }
 
-    private Quiz mapToQuiz(QuizRequest request, Assessment assessment) {
+    // Map QuizRequest to Quiz entity
+    private Quiz mapToQuiz(QuizRequest request) {
         Quiz quiz = new Quiz();
-        quiz.setQuizId(new QuizId(request.getQuizId(), assessment.getAssessmentId()));
-        quiz.setTimeInMinutes(request.getTimeInMinutes());
-        quiz.setAssessment(assessment); // Set reference to Assessment
+        quiz.setTimeInMinutes(request.getTimeInMinutes());    // Specific to Quiz
+        quiz.setDueDate(request.getDueDate());                // Inherited from Assessment
+        quiz.setMaxScore(request.getMaxScore());              // Inherited from Assessment
+        quiz.setCourseId(request.getCourseId());              // Inherited from Assessment
+        quiz.setCreated_date(LocalDate.now());                // Set creation date
+        quiz.setType("quiz");                                 // Type identifier
         return quiz;
     }
 }

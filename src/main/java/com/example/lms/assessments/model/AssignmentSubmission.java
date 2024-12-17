@@ -10,8 +10,9 @@ public class AssignmentSubmission {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer submissionId;
 
-    @Embedded
-    private AssignmentKey assignmentKey;
+    @ManyToOne
+    @JoinColumn(name = "assignment_id", nullable = false)
+    private Assignment assignment;
 
     @Column(nullable = false)
     private Integer userId;
@@ -28,12 +29,12 @@ public class AssignmentSubmission {
         this.submissionId = submissionId;
     }
 
-    public AssignmentKey getAssignmentKey() {
-        return assignmentKey;
+    public Assignment getAssignment() {
+        return assignment;
     }
 
-    public void setAssignmentKey(AssignmentKey assignmentKey) {
-        this.assignmentKey = assignmentKey;
+    public void setAssignment(Assignment assignment) {
+        this.assignment = assignment;
     }
 
     public Integer getUserId() {

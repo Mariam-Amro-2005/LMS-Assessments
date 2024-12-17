@@ -4,27 +4,27 @@ import jakarta.persistence.*;
 
 import java.time.LocalDate;
 
+
 @Entity
-@Table
+@Inheritance(strategy = InheritanceType.JOINED)
 public class Assessment {
+
     @Id
-    @SequenceGenerator(
-            name = "assessment_sequence",
-            sequenceName = "assessment_sequence",
-            allocationSize = 1
-    )
-    @GeneratedValue(
-            strategy = GenerationType.SEQUENCE,
-            generator = "assessment_sequence"
-    )
-    Integer assessmentId;
-    String type;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "assessment_id")
+    private Integer assessmentId;
+
+    private String type; // "quiz" or "assignment"
+
+    @Temporal(TemporalType.DATE)
     LocalDate created_date;
-    LocalDate due_date;
+    @Temporal(TemporalType.DATE)
+    private LocalDate due_date;
+
     private int courseId;
-    float max_score;
-    @Column(length = 500)
-    private String feedback;
+
+    private float max_score;
+
 
     public void setAssessmentId(Integer assessmentId) {
         this.assessmentId = assessmentId;
@@ -58,12 +58,12 @@ public class Assessment {
         this.courseId = courseId;
     }
 
-    public String getFeedback() {
-        return feedback;
+    public void setCreated_date(LocalDate created_date){
+        this.created_date = created_date;
     }
 
-    public void setFeedback(String feedback) {
-        this.feedback = feedback;
+    public void setType(String type){
+        this.type = type;
     }
 
 }

@@ -4,28 +4,18 @@ import java.time.LocalDate;
 
 public class AssignmentRequest {
 
-    private int assignmentId; // Composite key part 1
-    private Integer assessmentId; // Composite key part 2
-
+    private Integer assessmentId; // Direct reference to Assessment
     private String question;
     private LocalDate dueDate;
     private int maxScore;
     private int courseId;
 
     // Getters and Setters
-    public int getAssignmentId() {
-        return assignmentId;
-    }
-
-    public void setAssignmentId(int assignmentId) {
-        this.assignmentId = assignmentId;
-    }
-
-    public int getAssessmentId() {
+    public Integer getAssessmentId() {
         return assessmentId;
     }
 
-    public void setAssessmentId(int assessmentId) {
+    public void setAssessmentId(Integer assessmentId) {
         this.assessmentId = assessmentId;
     }
 

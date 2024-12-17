@@ -36,22 +36,18 @@ public class AssessmentController {
         return ResponseEntity.ok(response);
     }
 
-    // Get Assignment by composite key
-    @GetMapping("/assignments")
-    public ResponseEntity<Assignment> getAssignment(
-            @RequestParam int assignmentId,
-            @RequestParam int assessmentId) {
-        Optional<Assignment> assignment = assessmentService.getAssignmentById(assignmentId, assessmentId);
+    // Get Assignment by ID
+    @GetMapping("/assignments/{id}")
+    public ResponseEntity<Assignment> getAssignment(@PathVariable int id) {
+        Optional<Assignment> assignment = assessmentService.getAssignmentById(id);
         return assignment.map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // Get Quiz by composite key
-    @GetMapping("/quizzes")
-    public ResponseEntity<Quiz> getQuiz(
-            @RequestParam int quizId,
-            @RequestParam int assessmentId) {
-        Optional<Quiz> quiz = assessmentService.getQuizById(quizId, assessmentId);
+    // Get Quiz by ID
+    @GetMapping("/quizzes/{id}")
+    public ResponseEntity<Quiz> getQuiz(@PathVariable int id) {
+        Optional<Quiz> quiz = assessmentService.getQuizById(id);
         return quiz.map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
